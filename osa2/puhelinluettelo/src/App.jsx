@@ -1,5 +1,38 @@
 import { useState } from "react";
 
+const FilterForm = ({ searchName, handleSearchChange }) => {
+  return (
+    <div>
+      filter shown with{" "}
+      <form>
+        <input value={searchName} onChange={handleSearchChange} />
+      </form>
+    </div>
+  );
+};
+
+const AddNew = ({
+  addNewPerson,
+  newName,
+  newNumber,
+  handleNameChange,
+  handleNumberChange,
+}) => {
+  return (
+    <form onSubmit={addNewPerson}>
+      <div>
+        name: <input value={newName} onChange={handleNameChange} />
+      </div>
+      <div>
+        number: <input value={newNumber} onChange={handleNumberChange} />
+      </div>
+      <div>
+        <button type="submit">add</button>
+      </div>
+    </form>
+  );
+};
+
 const NamesAndNumbers = ({ persons, query }) => {
   const filterList = (list, query) => {
     if (query === "") {
@@ -64,22 +97,18 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      filter shown with{" "}
-      <form>
-        <input value={searchName} onChange={handleSearchChange} />
-      </form>
+      <FilterForm
+        searchName={searchName}
+        handleSearchChange={handleSearchChange}
+      />
       <h2>Add a new</h2>
-      <form onSubmit={addNewPerson}>
-        <div>
-          name: <input value={newName} onChange={handleNameChange} />
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={handleNumberChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <AddNew
+        addNewPerson={addNewPerson}
+        newName={newName}
+        newNumber={newNumber}
+        handleNameChange={handleNameChange}
+        handleNumberChange={handleNumberChange}
+      />
       <h2>Numbers</h2>
       <NamesAndNumbers persons={persons} query={searchName} />
     </div>
