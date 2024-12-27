@@ -23,10 +23,20 @@ const Course = ({ course }) => {
     );
   };
 
+  const Total = ({ parts }) => {
+    const totalExercises = parts.reduce((sum, part) => sum + part.exercises, 0);
+    return (
+      <div>
+        <p>Total exercises: {totalExercises}</p>
+      </div>
+    );
+  };
+
   return (
     <div>
       <Header course={course} />
       <Content parts={course.parts} />
+      <Total parts={course.parts} />
     </div>
   );
 };
