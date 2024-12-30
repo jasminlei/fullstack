@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import personsService from "./services/persons";
+import "./index.css";
 
 const FilterForm = ({ searchName, handleSearchChange }) => {
   return (
@@ -60,11 +61,20 @@ const NamesAndNumbers = ({ persons, query, onClick }) => {
   );
 };
 
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null;
+  }
+
+  return <div className="success">{message}</div>;
+};
+
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchName, setSearchName] = useState("");
+  const [successMessage, setSuccessMessage] = useState(null);
 
   useEffect(() => {
     personsService.getAll().then((response) => {
@@ -98,6 +108,12 @@ const App = () => {
             );
             setNewName("");
             setNewNumber("");
+            setSuccessMessage(
+              `Changed ${personToUpdate.name}'s number to ${personToUpdate.number}`
+            );
+            setTimeout(() => {
+              setSuccessMessage(null);
+            }, 3000);
           });
       }
     } else {
@@ -105,6 +121,10 @@ const App = () => {
         setPersons(persons.concat(response.data));
         setNewName("");
         setNewNumber("");
+        setSuccessMessage(`Added ${newPerson.name}`);
+        setTimeout(() => {
+          setSuccessMessage(null);
+        }, 3000);
       });
     }
   };
@@ -127,12 +147,17 @@ const App = () => {
       personsService.deletePerson(id).then(() => {
         setPersons(persons.filter((p) => p.id !== id));
       });
+      setSuccessMessage(`Deleted ${person.name}`);
+      setTimeout(() => {
+        setSuccessMessage(null);
+      }, 3000);
     }
   };
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={successMessage} />
       <FilterForm
         searchName={searchName}
         handleSearchChange={handleSearchChange}
