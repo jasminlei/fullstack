@@ -79,7 +79,27 @@ const App = () => {
     const nameAlreadyUsed = persons.some((person) => person.name === newName);
 
     if (nameAlreadyUsed) {
-      alert(`${newName} is already added to phonebook`);
+      const personToUpdate = persons.find((person) => person.name === newName);
+      if (
+        window.confirm(
+          `${newName} is already added to phonebook, replace the old number with the new one?`
+        )
+      ) {
+        personsService
+          .update(personToUpdate.id, {
+            name: personToUpdate.name,
+            number: newNumber,
+          })
+          .then((response) => {
+            setPersons(
+              persons.map((person) =>
+                person.id !== personToUpdate.id ? person : response.data
+              )
+            );
+            setNewName("");
+            setNewNumber("");
+          });
+      }
     } else {
       personsService.create(newPerson).then((response) => {
         setPersons(persons.concat(response.data));
