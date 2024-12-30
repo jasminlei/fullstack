@@ -34,7 +34,7 @@ const AddNew = ({
   );
 };
 
-const NamesAndNumbers = ({ persons, query }) => {
+const NamesAndNumbers = ({ persons, query, onClick }) => {
   const filterList = (list, query) => {
     if (query === "") {
       return list;
@@ -50,7 +50,10 @@ const NamesAndNumbers = ({ persons, query }) => {
     <div>
       {filteredPersons.map((person) => (
         <p key={person.name}>
-          {person.name} {person.number}
+          {person.name} {person.number}{" "}
+          <button type="button" onClick={() => onClick(person.id)}>
+            delete
+          </button>
         </p>
       ))}
     </div>
@@ -98,6 +101,15 @@ const App = () => {
     setSearchName(event.target.value);
   };
 
+  const handleDelete = (id) => {
+    const person = persons.find((p) => p.id === id);
+    if (window.confirm(`Delete ${person.name}?`)) {
+      personsService.deletePerson(id).then(() => {
+        setPersons(persons.filter((p) => p.id !== id));
+      });
+    }
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -114,7 +126,11 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h2>Numbers</h2>
-      <NamesAndNumbers persons={persons} query={searchName} />
+      <NamesAndNumbers
+        persons={persons}
+        query={searchName}
+        onClick={handleDelete}
+      />
     </div>
   );
 };
