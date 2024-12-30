@@ -9,3 +9,15 @@
   margin-bottom: 20px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
+
+.error {
+  color: rgb(135, 32, 32);
+  background: #d65946;
+  font-size: 18px;
+  font-weight: bold;
+  border: 1px solid #d32f2f;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}

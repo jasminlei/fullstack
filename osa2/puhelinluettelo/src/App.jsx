@@ -61,12 +61,12 @@ const NamesAndNumbers = ({ persons, query, onClick }) => {
   );
 };
 
-const Notification = ({ message }) => {
+const Notification = ({ message, messageType }) => {
   if (message === null) {
     return null;
   }
 
-  return <div className="success">{message}</div>;
+  return <div className={messageType}>{message}</div>;
 };
 
 const App = () => {
@@ -75,6 +75,7 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [searchName, setSearchName] = useState("");
   const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     personsService.getAll().then((response) => {
@@ -113,6 +114,14 @@ const App = () => {
             );
             setTimeout(() => {
               setSuccessMessage(null);
+            }, 3000);
+          })
+          .catch((error) => {
+            setErrorMessage(
+              `Information of ${personToUpdate.name} has been removed from server`
+            );
+            setTimeout(() => {
+              setErrorMessage(null);
             }, 3000);
           });
       }
@@ -157,7 +166,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={successMessage} />
+      <Notification message={successMessage} messageType="success" />
+      <Notification message={errorMessage} messageType="error" />
       <FilterForm
         searchName={searchName}
         handleSearchChange={handleSearchChange}
