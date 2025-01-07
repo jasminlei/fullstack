@@ -1,5 +1,35 @@
 import { useState, useEffect } from "react";
 import countriesService from "./services/countries";
+import weatherService from "./services/weather";
+
+const Weather = ({ city }) => {
+  const [weatherData, setWeatherData] = useState(null);
+
+  useEffect(() => {
+    weatherService
+      .getWeather(city)
+      .then((data) => {
+        setWeatherData(data);
+      })
+      .catch((error) => {
+        console.error("error loading weather info:", error);
+      });
+  }, [city]);
+
+  if (!weatherData) {
+    return <p>loading weather information...</p>;
+  }
+  return (
+    <div>
+      <h1>Weather in {city}</h1>
+      <p>temperature {weatherData.main.temp} °C</p>
+      <img
+        src={`https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`}
+      />
+      <p>wind {weatherData.wind.speed} m/s</p>
+    </div>
+  );
+};
 
 const Search = ({ searchQuery, handleSearchChange }) => {
   return (
@@ -22,6 +52,7 @@ const Country = ({ country }) => {
         ))}
       </ul>
       <img src={country.flags.png} alt={`Flag of ${country.name.common}`} />
+      <Weather city={country.capital} />
     </div>
   );
 };
