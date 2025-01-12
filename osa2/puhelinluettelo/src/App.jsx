@@ -126,15 +126,24 @@ const App = () => {
           });
       }
     } else {
-      personsService.create(newPerson).then((response) => {
-        setPersons(persons.concat(response.data));
-        setNewName("");
-        setNewNumber("");
-        setSuccessMessage(`Added ${newPerson.name}`);
-        setTimeout(() => {
-          setSuccessMessage(null);
-        }, 3000);
-      });
+      personsService
+        .create(newPerson)
+        .then((response) => {
+          setPersons(persons.concat(response.data));
+          setNewName("");
+          setNewNumber("");
+          setSuccessMessage(`Added ${newPerson.name}`);
+          setTimeout(() => {
+            setSuccessMessage(null);
+          }, 3000);
+        })
+        .catch((error) => {
+          console.log(error.response.data);
+          setErrorMessage(error.response.data.error);
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 3000);
+        });
     }
   };
 
