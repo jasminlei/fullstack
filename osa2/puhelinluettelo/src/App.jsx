@@ -110,7 +110,7 @@ const App = () => {
             setNewName("");
             setNewNumber("");
             setSuccessMessage(
-              `Changed ${personToUpdate.name}'s number to ${personToUpdate.number}`
+              `Changed ${personToUpdate.name}'s number to ${newNumber}`
             );
             setTimeout(() => {
               setSuccessMessage(null);
