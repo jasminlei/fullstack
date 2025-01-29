@@ -1,5 +1,5 @@
 const config = require("./utils/config");
-const config = require("./utils/logger");
+const logger = require("./utils/logger");
 const app = require("./app");
 
 app.listen(config.PORT, () => {

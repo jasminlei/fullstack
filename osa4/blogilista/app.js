@@ -1,5 +1,6 @@
 const config = require("./utils/config");
-const config = require("./utils/logger");
+const logger = require("./utils/logger");
+const mongoose = require("mongoose");
 
 const express = require("express");
 const app = express();
