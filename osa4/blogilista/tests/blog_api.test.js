@@ -104,6 +104,19 @@ test("404 if url is not given ", async () => {
   const response = await api.post("/api/blogs").send(newBlog).expect(400);
 });
 
+test("removing blogs works", async () => {
+  const newBlog = {
+    title: "Blog to delete",
+    author: "Author Name",
+    url: "http://example.com",
+  };
+  const createResponse = await api.post("/api/blogs").send(newBlog).expect(201);
+
+  const blogToDelete = createResponse.body;
+
+  await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
