@@ -12,7 +12,6 @@ blogsRouter.get("/:id", async (request, response) => {
   try {
     const id = request.params.id;
     const blog = await Blog.findById(id);
-    response.json(blog);
     if (blog) {
       response.json(blog);
     } else {
@@ -56,6 +55,25 @@ blogsRouter.delete("/:id", async (request, response) => {
       error.message
     );
     response.status(400).json({ error: "Invalid blog ID" });
+  }
+});
+
+blogsRouter.put("/:id", async (request, response) => {
+  try {
+    const body = request.body;
+    console.log(body);
+
+    const blog = {
+      title: body.title,
+      author: body.author,
+      url: body.url,
+      likes: body.likes,
+    };
+
+    await Blog.findByIdAndUpdate(request.params.id, blog, { new: true });
+    response.json(blog);
+  } catch (error) {
+    logger.error("Error when trying to modify blog", error.message);
   }
 });
 

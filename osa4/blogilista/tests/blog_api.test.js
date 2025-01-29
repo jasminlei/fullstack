@@ -9,13 +9,13 @@ const api = supertest(app);
 
 const initialBlogs = [
   {
-    title: "Otsikko",
-    author: "Blaa blaa",
+    title: "Test title",
+    author: "Author 1",
     url: "ww.com",
   },
   {
-    title: "Otsikko2 ",
-    author: "Blaa blaa2",
+    title: "Test title 2",
+    author: "Author 2",
     url: "www.com",
   },
 ];
@@ -115,6 +115,35 @@ test("removing blogs works", async () => {
   const blogToDelete = createResponse.body;
 
   await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+});
+
+test("modifying blog works", async () => {
+  const newBlog = {
+    title: "Blog to modify",
+    author: "Author Name",
+    url: "http://example.com",
+    likes: 7,
+    id: 123456,
+  };
+  const response = await api
+    .post("/api/blogs")
+    .send(newBlog)
+    .expect(201)
+    .expect("Content-Type", /application\/json/);
+
+  const blogToModify = response.body;
+
+  const modifiedBlog = {
+    title: "Modified",
+    author: "Author Name New",
+    url: "http://example.dev",
+    likes: 8,
+  };
+
+  const createResponse = await api
+    .put(`/api/blogs/${blogToModify.id}`)
+    .send(modifiedBlog)
+    .expect(200);
 });
 
 after(async () => {
