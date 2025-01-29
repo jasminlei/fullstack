@@ -40,8 +40,6 @@ test("blogs are returned with id field", async () => {
     .get("/api/blogs")
     .expect(200)
     .expect("Content-Type", /application\/json/);
-  console.log(response.body);
-
   response.body.forEach((blog) => {
     assert.strictEqual(blog.id !== undefined, true);
   });
@@ -62,14 +60,10 @@ test("a valid blog can be added ", async () => {
     .expect("Content-Type", /application\/json/);
 
   const response = await api.get("/api/blogs");
-
-  console.log(response.body);
-
   assert.strictEqual(response.body.length, initialBlogs.length + 1);
 
   const titles = response.body.map((r) => r.title);
   const authors = response.body.map((r) => r.author);
-
   assert(titles.includes("NewTitle"));
   assert(authors.includes("Text text"));
 });
