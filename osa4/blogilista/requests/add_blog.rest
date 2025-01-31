@@ -1,9 +1,10 @@
 POST http://localhost:3001/api/blogs/
 content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ik5vcnBwYTIiLCJpZCI6IjY3OWIyN2U3NzkzMzMwZWI2ODVlZWE1ZSIsImlhdCI6MTczODI1NDY5NH0.uSipFShBQAl1TBqM22XCf64fyxZ-Vy069hdsKzelcPA
 
 {
-    "title": "title 1",
+    "title": "another title",
     "author": "author 1",
     "url": "ww.com",
-    "likes": 6
+    "likes": 9
 }
