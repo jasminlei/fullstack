@@ -3,7 +3,7 @@ const logger = require("../utils/logger");
 const jwt = require("jsonwebtoken");
 const Blog = require("../models/blog");
 const User = require("../models/user");
-const { tokenExtractor } = require("../utils/middleware");
+const { tokenExtractor, userExtractor } = require("../utils/middleware");
 
 blogsRouter.use(tokenExtractor);
 
@@ -31,7 +31,7 @@ blogsRouter.get("/:id", async (request, response) => {
   }
 });
 
-blogsRouter.post("/", async (request, response) => {
+blogsRouter.post("/", userExtractor, async (request, response) => {
   try {
     const body = request.body;
 
@@ -44,7 +44,7 @@ blogsRouter.post("/", async (request, response) => {
       return response.status(401).json({ error: "token invalid" });
     }
 
-    const user = await User.findById(decodedToken.id);
+    const user = request.user;
     if (!user) {
       return response.status(404).json({ error: "user not found" });
     }
@@ -78,7 +78,7 @@ blogsRouter.delete("/:id", async (request, response) => {
       return response.status(401).json({ error: "token invalid" });
     }
 
-    const user = await User.findById(decodedToken.id);
+    const user = request.user;
 
     if (!user) {
       return response.status(404).json({ error: "user not found" });
@@ -111,7 +111,6 @@ blogsRouter.delete("/:id", async (request, response) => {
 blogsRouter.put("/:id", async (request, response) => {
   try {
     const body = request.body;
-    console.log(body);
 
     const blog = {
       title: body.title,
