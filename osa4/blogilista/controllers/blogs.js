@@ -68,15 +68,37 @@ blogsRouter.post("/", async (request, response) => {
 
 blogsRouter.delete("/:id", async (request, response) => {
   try {
-    const blog = await Blog.findByIdAndDelete(request.params.id);
-
-    if (blog) {
-      logger.info(`Blog with id ${request.params.id} removed successfully.`);
-      response.status(204).end();
-    } else {
-      logger.info(`Blog with id ${request.params.id} not found.`);
-      response.status(404).json({ error: "Blog not found" });
+    if (!request.token) {
+      return response.status(401).json({ error: "token missing" });
     }
+
+    const decodedToken = jwt.verify(request.token, process.env.SECRET);
+
+    if (!decodedToken.id) {
+      return response.status(401).json({ error: "token invalid" });
+    }
+
+    const user = await User.findById(decodedToken.id);
+
+    if (!user) {
+      return response.status(404).json({ error: "user not found" });
+    }
+
+    const blog = await Blog.findById(request.params.id);
+    if (!blog) {
+      logger.info(`Blog with id ${request.params.id} not found.`);
+      return response.status(404).json({ error: "Blog not found" });
+    }
+
+    if (blog.user.toString() !== user.id.toString()) {
+      return response
+        .status(403)
+        .json({ error: "Not authorized to delete this blog" });
+    }
+
+    await Blog.findByIdAndDelete(request.params.id);
+    logger.info(`Blog with id ${request.params.id} removed successfully.`);
+    response.status(204).end();
   } catch (error) {
     logger.error(
       `Error when trying to delete blog with id ${request.params.id}:`,
