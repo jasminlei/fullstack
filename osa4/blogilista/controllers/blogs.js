@@ -3,6 +3,7 @@ const logger = require("../utils/logger");
 const jwt = require("jsonwebtoken");
 const Blog = require("../models/blog");
 const User = require("../models/user");
+const { tokenExtractor } = require("../utils/middleware");
 
 blogsRouter.use(tokenExtractor);
 
