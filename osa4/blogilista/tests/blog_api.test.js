@@ -4,6 +4,7 @@ const supertest = require("supertest");
 const app = require("../app");
 const assert = require("assert");
 const Blog = require("../models/blog");
+const User = require("../models/user");
 
 const api = supertest(app);
 
@@ -20,12 +21,33 @@ const initialBlogs = [
   },
 ];
 
+let token = "";
+let userId = "";
+
 beforeEach(async () => {
+  await User.deleteMany({});
   await Blog.deleteMany({});
   let blogObject = new Blog(initialBlogs[0]);
   await blogObject.save();
   blogObject = new Blog(initialBlogs[1]);
   await blogObject.save();
+
+  const newUser = {
+    username: "testuser",
+    name: "Test User",
+    password: "password123",
+  };
+
+  const user = await api
+    .post("/api/users")
+    .send({ username: newUser.username, password: newUser.password });
+
+  const loginResponse = await api
+    .post("/api/login")
+    .send({ username: newUser.username, password: newUser.password });
+
+  token = loginResponse.body.token;
+  userId = loginResponse.body.id;
 });
 
 test("blogs are returned as json", async () => {
@@ -45,16 +67,19 @@ test("blogs are returned with id field", async () => {
   });
 });
 
-test("a valid blog can be added ", async () => {
+test("a valid blog can be added", async () => {
   const newBlog = {
     title: "NewTitle",
-    author: "Text text",
+    author: "Test user",
     url: "ww.com",
     likes: 2,
   };
 
   await api
     .post("/api/blogs")
+    .set({
+      Authorization: `Bearer ${token}`,
+    })
     .send(newBlog)
     .expect(201)
     .expect("Content-Type", /application\/json/);
@@ -63,9 +88,18 @@ test("a valid blog can be added ", async () => {
   assert.strictEqual(response.body.length, initialBlogs.length + 1);
 
   const titles = response.body.map((r) => r.title);
-  const authors = response.body.map((r) => r.author);
   assert(titles.includes("NewTitle"));
-  assert(authors.includes("Text text"));
+});
+
+test("401 unauthorized if no token with request", async () => {
+  const newBlog = {
+    title: "NewTitle",
+    author: "Test user",
+    url: "ww.com",
+    likes: 2,
+  };
+
+  await api.post("/api/blogs").send(newBlog).expect(401);
 });
 
 test("if not likes are given the value is zero ", async () => {
@@ -77,6 +111,7 @@ test("if not likes are given the value is zero ", async () => {
 
   const response = await api
     .post("/api/blogs")
+    .set("Authorization", `Bearer ${token}`)
     .send(newBlog)
     .expect(201)
     .expect("Content-Type", /application\/json/);
@@ -91,7 +126,11 @@ test("404 if title is not given ", async () => {
     likes: 2,
   };
 
-  const response = await api.post("/api/blogs").send(newBlog).expect(400);
+  const response = await api
+    .post("/api/blogs")
+    .set("Authorization", `Bearer ${token}`)
+    .send(newBlog)
+    .expect(400);
 });
 
 test("404 if url is not given ", async () => {
@@ -101,7 +140,11 @@ test("404 if url is not given ", async () => {
     likes: 1,
   };
 
-  const response = await api.post("/api/blogs").send(newBlog).expect(400);
+  const response = await api
+    .post("/api/blogs")
+    .set("Authorization", `Bearer ${token}`)
+    .send(newBlog)
+    .expect(400);
 });
 
 test("removing blogs works", async () => {
@@ -110,11 +153,20 @@ test("removing blogs works", async () => {
     author: "Author Name",
     url: "http://example.com",
   };
-  const createResponse = await api.post("/api/blogs").send(newBlog).expect(201);
+  const createResponse = await api
+    .post("/api/blogs")
+    .set({
+      Authorization: `Bearer ${token}`,
+    })
+    .send(newBlog)
+    .expect(201);
 
   const blogToDelete = createResponse.body;
 
-  await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+  await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .set("Authorization", `Bearer ${token}`)
+    .expect(204);
 });
 
 test("modifying blog works", async () => {
@@ -127,6 +179,9 @@ test("modifying blog works", async () => {
   };
   const response = await api
     .post("/api/blogs")
+    .set({
+      Authorization: `Bearer ${token}`,
+    })
     .send(newBlog)
     .expect(201)
     .expect("Content-Type", /application\/json/);
@@ -142,6 +197,7 @@ test("modifying blog works", async () => {
 
   const createResponse = await api
     .put(`/api/blogs/${blogToModify.id}`)
+    .set("Authorization", `Bearer ${token}`)
     .send(modifiedBlog)
     .expect(200);
 });

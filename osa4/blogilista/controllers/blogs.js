@@ -43,8 +43,8 @@ blogsRouter.post("/", userExtractor, async (request, response) => {
     if (!decodedToken.id) {
       return response.status(401).json({ error: "token invalid" });
     }
-
     const user = request.user;
+
     if (!user) {
       return response.status(404).json({ error: "user not found" });
     }
@@ -66,7 +66,7 @@ blogsRouter.post("/", userExtractor, async (request, response) => {
   }
 });
 
-blogsRouter.delete("/:id", async (request, response) => {
+blogsRouter.delete("/:id", userExtractor, async (request, response) => {
   try {
     if (!request.token) {
       return response.status(401).json({ error: "token missing" });

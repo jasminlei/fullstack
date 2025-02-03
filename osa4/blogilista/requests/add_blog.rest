@@ -1,10 +1,10 @@
 POST http://localhost:3001/api/blogs/
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ik5vcnBwYTIiLCJpZCI6IjY3OWIyN2U3NzkzMzMwZWI2ODVlZWE1ZSIsImlhdCI6MTczODMzMjgxN30.E6gLx6TKBNbjLIm6YplFRqtsIr0pPtjElYvjUSrkxP0
+Authorization: Bearer token
 
 {
-    "title": "new blog yay!",
-    "author": "Norppa",
+    "title": "Title",
+    "author": "Happy Seal",
     "url": "ww.com",
     "likes": 100
 }
