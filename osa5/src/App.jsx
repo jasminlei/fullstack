@@ -111,7 +111,12 @@ const App = () => {
             .slice()
             .sort((a, b) => b.likes - a.likes)
             .map((blog) => (
-              <Blog key={blog.id} blog={blog} updateBlogList={updateBlogList} />
+              <Blog
+                key={blog.id}
+                blog={blog}
+                updateBlogList={updateBlogList}
+                user={user}
+              />
             ))}
           <Togglable
             buttonLabel="new note"

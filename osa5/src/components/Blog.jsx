@@ -2,7 +2,7 @@ import Togglable from "./Togglable";
 import blogService from "../services/blogs";
 import { useState } from "react";
 
-const Blog = ({ blog, updateBlogList }) => {
+const Blog = ({ blog, updateBlogList, user }) => {
   const [likes, setLikes] = useState(blog.likes);
 
   const blogStyle = {
@@ -20,6 +20,19 @@ const Blog = ({ blog, updateBlogList }) => {
     setLikes(likes + 1);
     updateBlogList();
   };
+
+  const handleRemove = async () => {
+    const confirmDelete = window.confirm(
+      `Remove blog "${blog.title}" by ${blog.author}?`
+    );
+    if (confirmDelete) {
+      await blogService.removeBlog(blog.id);
+      updateBlogList();
+    }
+  };
+
+  const showRemoveButton =
+    blog.user && user && blog.user.username === user.username;
 
   return (
     <div style={blogStyle}>
@@ -40,6 +53,7 @@ const Blog = ({ blog, updateBlogList }) => {
             {blog.author}
             <br />
           </span>
+          {showRemoveButton && <button onClick={handleRemove}>remove</button>}
         </Togglable>
       </div>
     </div>
