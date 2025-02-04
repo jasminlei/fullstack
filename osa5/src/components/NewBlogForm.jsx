@@ -1,35 +1,34 @@
-import { useState } from "react";
+import { useState } from 'react'
 
 const NewBlogForm = ({ createBlog }) => {
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [url, setUrl] = useState("");
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [url, setUrl] = useState('')
 
   const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log("we are in form");
-    createBlog({ title, author, url });
-    setTitle("");
-    setAuthor("");
-    setUrl("");
-  };
+    event.preventDefault()
+    createBlog({ title, author, url })
+    setTitle('')
+    setAuthor('')
+    setUrl('')
+  }
 
   return (
     <form onSubmit={handleSubmit}>
       <div>
-        Title:{" "}
+        Title:{' '}
         <input value={title} onChange={(e) => setTitle(e.target.value)} />
       </div>
       <div>
-        Author:{" "}
+        Author:{' '}
         <input value={author} onChange={(e) => setAuthor(e.target.value)} />
       </div>
       <div>
         URL: <input value={url} onChange={(e) => setUrl(e.target.value)} />
       </div>
-      <button type="submit">Create</button>
+      <button type='submit'>Create</button>
     </form>
-  );
-};
+  )
+}
 
-export default NewBlogForm;
+export default NewBlogForm
