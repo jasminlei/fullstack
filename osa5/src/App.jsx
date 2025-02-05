@@ -56,7 +56,9 @@ const App = () => {
   const addBlog = async (blogObject) => {
     try {
       const newBlog = await blogService.create(blogObject)
-      setBlogs(blogs.concat(newBlog))
+      const blogWithUser = { ...newBlog, user }
+
+      setBlogs(blogs.concat(blogWithUser))
 
       setNotification(
         `A new blog "${newBlog.title}" by ${newBlog.author} added`
@@ -149,7 +151,7 @@ const App = () => {
               />
             ))}
           <Togglable
-            buttonLabel='new note'
+            buttonLabel='new blog'
             buttonLabelClose='close'
             ref={blogFormRef}
           >

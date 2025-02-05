@@ -14,7 +14,7 @@ const Blog = ({ blog, handleLike, handleRemove, user }) => {
     blog.user && user && blog.user.username === user.username
 
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className='blog'>
       <div>
         <b>{blog.title}</b>
         <Togglable buttonLabel='view' buttonLabelClose='hide'>
