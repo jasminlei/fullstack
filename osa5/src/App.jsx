@@ -12,10 +12,6 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [notification, setNotification] = useState(null)
   const [notificationType, setNotificationType] = useState(null)
 
@@ -76,9 +72,18 @@ const App = () => {
     }
   }
 
-  const updateBlogList = async () => {
-    const blogs = await blogService.getAll()
-    setBlogs(blogs)
+  const handleLike = async (id) => {
+    const blogToUpdate = blogs.find((b) => b.id === id)
+    if (!blogToUpdate) return
+
+    const updatedBlog = { ...blogToUpdate, likes: blogToUpdate.likes + 1 }
+
+    try {
+      await blogService.updateBlog(id, updatedBlog)
+      setBlogs(blogs.map((b) => (b.id === id ? updatedBlog : b)))
+    } catch (error) {
+      console.error('Error updating likes:', error)
+    }
   }
 
   const handleLogout = () => {
@@ -87,6 +92,30 @@ const App = () => {
     setNotification('Logged out successfully')
     setNotificationType('success')
     setTimeout(() => setNotification(null), 5000)
+  }
+
+  const handleRemove = async (id) => {
+    const blogToRemove = blogs.find((b) => b.id === id)
+    if (!blogToRemove) return
+
+    const confirmDelete = window.confirm(
+      `Remove blog "${blogToRemove.title}" by ${blogToRemove.author}?`
+    )
+
+    if (confirmDelete) {
+      try {
+        await blogService.removeBlog(id)
+        setBlogs(blogs.filter((b) => b.id !== id))
+        setNotification(`Blog "${blogToRemove.title}" removed successfully`)
+        setNotificationType('success')
+        setTimeout(() => setNotification(null), 5000)
+      } catch (error) {
+        console.error('Error removing blog:', error)
+        setNotification('Error removing blog')
+        setNotificationType('error')
+        setTimeout(() => setNotification(null), 5000)
+      }
+    }
   }
 
   const blogFormRef = useRef()
@@ -114,7 +143,8 @@ const App = () => {
               <Blog
                 key={blog.id}
                 blog={blog}
-                updateBlogList={updateBlogList}
+                handleLike={handleLike}
+                handleRemove={handleRemove}
                 user={user}
               />
             ))}
