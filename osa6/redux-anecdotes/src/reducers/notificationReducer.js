@@ -15,13 +15,20 @@ const notificationSlice = createSlice({
 
 const { setNotification, clearNotification } = notificationSlice.actions
 
-export const showNotification =
-  (message, time = 5) =>
-  (dispatch) => {
+let timeoutId
+
+export const showNotification = (message, time = 5) => {
+  return (dispatch) => {
     dispatch(setNotification(message))
-    setTimeout(() => {
+
+    if (timeoutId) {
+      clearTimeout(timeoutId)
+    }
+
+    timeoutId = setTimeout(() => {
       dispatch(clearNotification())
     }, time * 1000)
   }
+}
 
 export default notificationSlice.reducer
