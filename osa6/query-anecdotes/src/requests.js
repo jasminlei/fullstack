@@ -9,6 +9,7 @@ export const getAnecdotes = async () => {
 }
 
 export const createAnecdote = async (newAnecdote) => {
+  console.log('Sending to server:', newAnecdote)
   const response = await fetch(baseUrl, {
     method: 'POST',
     headers: {
@@ -17,7 +18,9 @@ export const createAnecdote = async (newAnecdote) => {
     body: JSON.stringify(newAnecdote),
   })
   if (!response.ok) {
-    throw new Error('Failed to create anecdote')
+    const error = await response.json()
+    console.log('Server error:', error)
+    throw new Error(error.error || 'Failed to create anecdote')
   }
   return response.json()
 }
